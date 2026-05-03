@@ -73,11 +73,15 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           wget https://github.com/bbernhard/libsignal-client-builds/releases/download/v${LIBSIGNAL_VERSION}/libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
           tar xvf libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
-          cp ${GITHUB_WORKSPACE}/arm64/libsignal_jni.so ${GITHUB_WORKSPACE}/signal-cli
+          cp ${GITHUB_WORKSPACE}/arm64/libsignal_jni.so /tmp/libsignal_jni.so
+      - name: Update libsignal-client.jar
+        run: |
+          cp ${GITHUB_WORKSPACE}/signal-cli/build/install/signal-cli/lib/libsignal-client-${LIBSIGNAL_CLIENT_VERSION}.jar /tmp/libsignal-client.jar
+          cd /tmp && zip -qu libsignal-client.jar libsignal_jni.so
       - name: Build native version
         run: |
           df -h
           echo "Apply signal-cli-native-patch"
-          git apply ${GITHUB_WORKSPACE}/signal-cli-native.patch
+          cd $GITHUB_WORKSPACE/signal-cli && git apply ${GITHUB_WORKSPACE}/signal-cli-native.patch
           echo "Start native build (libsignal-version: ${LIBSIGNAL_VERSION})"
           cd $GITHUB_WORKSPACE/signal-cli && ./gradlew nativeCompile
