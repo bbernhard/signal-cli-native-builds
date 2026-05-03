@@ -1,0 +1,81 @@
+name: build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'     
+        required: true
+
+env:
+    GRAALVM_VERSIONK: 25.0.2
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v6 
+      - name: Setup GraalVM
+        run: |
+          wget -nv https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-aarch64_bin.tar.gz -O $GITHUB_WORKSPACE/gvm.tar.gz
+          tar xvf gvm.tar.gz
+          export GRAALVM_HOME=$GITHUB_WORKSPACE/graalvm
+          export PATH=$GITHUB_WORKSPACE/graalvm/bin:$PATH
+      - name: Clone signal-cli repository
+        run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/AsamK/signal-cli/ signal-cli
+      - name: Free up disk space
+        run: |
+          # Remove Java (JDKs)
+          sudo rm -rf /usr/lib/jvm
+
+          # Remove .NET SDKs
+          sudo rm -rf /usr/share/dotnet
+
+          # Remove Swift toolchain
+          sudo rm -rf /usr/share/swift
+
+          # Remove Haskell (GHC)
+          sudo rm -rf /usr/local/.ghcup
+
+          # Remove Julia
+          sudo rm -rf /usr/local/julia*
+
+          # Remove Android SDKs
+          sudo rm -rf /usr/local/lib/android
+
+          # Remove Chromium
+          sudo rm -rf /usr/local/share/chromium
+
+          # Remove Microsoft/Edge and Google Chrome builds
+          sudo rm -rf /opt/microsoft /opt/google
+
+          # Remove Azure CLI
+          sudo rm -rf /opt/az
+
+          # Remove PowerShell
+          sudo rm -rf /usr/local/share/powershell
+
+          # Remove CodeQL and other toolcaches
+          #sudo rm -rf /opt/hostedtoolcache
+
+          #docker system prune -af || true
+          #docker builder prune -af || true
+          df -h
+      - name: Determine libsignal version
+        run: |
+          cd $GITHUB_WORKSPACE/signal-cli
+          export LIBSIGNAL_VERSION=$(< libsignal-version)
+          echo "signal-cli requires libsignal-client version ${LIBSIGNAL_VERSION}"
+      - name: Get libsignal-client version
+        run: |
+          cd ${GITHUB_WORKSPACE}
+          wget https://github.com/bbernhard/libsignal-client-builds/releases/download/v${LIBSIGNAL_VERSION}/libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
+          tar xvf libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
+          cp ${GITHUB_WORKSPACE}/arm64/libsignal_jni.so ${GITHUB_WORKSPACE}/signal-cli
+        run: |
+          df -h
+          echo "Apply signal-cli-native-patch"
+          git apply ${GITHUB_WORKSPACE}/signal-cli-native.patch
+          echo "Start native build (libsignal-version: ${LIBSIGNAL_VERSION})"
+          cd $GITHUB_WORKSPACE/signal-cli && ./gradlew nativeCompile
