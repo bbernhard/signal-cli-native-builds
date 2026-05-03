@@ -73,6 +73,7 @@ jobs:
           wget https://github.com/bbernhard/libsignal-client-builds/releases/download/v${LIBSIGNAL_VERSION}/libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
           tar xvf libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
           cp ${GITHUB_WORKSPACE}/arm64/libsignal_jni.so ${GITHUB_WORKSPACE}/signal-cli
+      - name: Build native version
         run: |
           df -h
           echo "Apply signal-cli-native-patch"
