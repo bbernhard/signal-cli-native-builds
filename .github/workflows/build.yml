@@ -65,7 +65,8 @@ jobs:
       - name: Determine libsignal version
         run: |
           cd $GITHUB_WORKSPACE/signal-cli
-          export LIBSIGNAL_VERSION=$(< libsignal-version)
+          ver=$(< libsignal-version)
+          echo "LIBSIGNAL_VERSION=$ver" >> $GITHUB_ENV
           echo "signal-cli requires libsignal-client version ${LIBSIGNAL_VERSION}"
       - name: Get libsignal-client version
         run: |
