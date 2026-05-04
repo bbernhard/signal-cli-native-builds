@@ -79,7 +79,7 @@ jobs:
           mkdir /tmp/signal-cli-release
           tagWithoutPrefix=${{ inputs.version}}
           tagWithoutPrefix=${tagWithoutPrefix#v}
-          wget -nv https://github.com/AsamK/signal-cli/releases/download/${tagWithoutPrefix}/signal-cli-${{ inputs.version}}.tar.gz -O /tmp/signal-cli-release/signal-cli.tar.gz
+          wget -nv https://github.com/AsamK/signal-cli/releases/download/${{ inputs.version}}/signal-cli-${tagWithoutPrefix}.tar.gz -O /tmp/signal-cli-release/signal-cli.tar.gz
           cd /tmp/signal-cli-release
           tar xvf signal-cli.tar.gz
           cp /tmp/signal-cli-release/signal-cli-${{ inputs.version }}/lib/libsignal-client-${LIBSIGNAL_VERSION}.jar /tmp/libsignal-client.jar
