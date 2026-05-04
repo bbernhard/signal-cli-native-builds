@@ -109,8 +109,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: native-image-${{ matrix.os }}
-          path: $GITHUB_WORKSPACE/signal-cli/build/native/nativeCompile/signal-cli
+          path: signal-cli/build/native/nativeCompile/signal-cli
           if-no-files-found: error
+          retention-days: 1
   release:
     runs-on: ubuntu-24.04
     needs: build
