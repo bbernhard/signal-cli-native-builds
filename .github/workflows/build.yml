@@ -12,13 +12,17 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        platform: [amd64, arm64]
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v6 
       - name: Setup GraalVM
         run: |
-          wget -nv https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-aarch64_bin.tar.gz -O $GITHUB_WORKSPACE/gvm.tar.gz
+          arch=$([ "${{ matrix.platform }}" == "amd64" ] && echo "x64" || echo "aarch64")
+          wget -nv https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-${arch}_bin.tar.gz -O $GITHUB_WORKSPACE/gvm.tar.gz
           mkdir $GITHUB_WORKSPACE/graalvm
           tar xvf gvm.tar.gz -C $GITHUB_WORKSPACE/graalvm --strip-components=1
           echo "GRAALVM_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
@@ -79,7 +83,8 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           wget https://github.com/bbernhard/libsignal-client-builds/releases/download/v${LIBSIGNAL_VERSION}/libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
           tar xvf libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
-          cp ${GITHUB_WORKSPACE}/arm64/libsignal_jni.so /tmp/libsignal_jni.so
+          arch=$([ "${{ matrix.platform }}" == "amd64" ] && echo "x64-64" || echo "arm64")
+          cp ${GITHUB_WORKSPACE}/${arch}/libsignal_jni.so /tmp/libsignal_jni.so
       - name: Get signal-cli release to extract jar file
         run: |
           mkdir /tmp/signal-cli-release
@@ -99,3 +104,4 @@ jobs:
           cd $GITHUB_WORKSPACE/signal-cli && git apply ${GITHUB_WORKSPACE}/signal-cli-native.patch
           echo "Start native build (libsignal-version: ${LIBSIGNAL_VERSION})"
           cd $GITHUB_WORKSPACE/signal-cli && ./gradlew nativeCompile
+          #$GITHUB_WORKSPACE/signal-cli/build/native/nativeCompile/signal-cli
