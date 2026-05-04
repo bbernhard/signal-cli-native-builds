@@ -83,7 +83,7 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           wget https://github.com/bbernhard/libsignal-client-builds/releases/download/v${LIBSIGNAL_VERSION}/libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
           tar xvf libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
-          arch=$([ "${{ matrix.platform }}" == "amd64" ] && echo "x64-64" || echo "arm64")
+          arch=$([ "${{ matrix.platform }}" == "amd64" ] && echo "x86-64" || echo "arm64")
           cp ${GITHUB_WORKSPACE}/${arch}/libsignal_jni.so /tmp/libsignal_jni.so
       - name: Get signal-cli release to extract jar file
         run: |
