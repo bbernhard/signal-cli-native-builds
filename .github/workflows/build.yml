@@ -77,7 +77,9 @@ jobs:
       - name: Get signal-cli release to extract jar file
         run: |
           mkdir /tmp/signal-cli-release
-          wget -nv https://github.com/AsamK/signal-cli/releases/download/${{ inputs.version#v }}/signal-cli-${{ inputs.version }}.tar.gz -O /tmp/signal-cli-release/signal-cli.tar.gz
+          tagWithoutPrefix=${{ inputs.version}}
+          tagWithoutPrefix=${tagWithoutPrefix#v}
+          wget -nv https://github.com/AsamK/signal-cli/releases/download/${tagWithoutPrefix}/signal-cli-${{ inputs.version}}.tar.gz -O /tmp/signal-cli-release/signal-cli.tar.gz
           cd /tmp/signal-cli-release
           tar xvf signal-cli.tar.gz
           cp /tmp/signal-cli-release/signal-cli-${{ inputs.version }}/lib/libsignal-client-${LIBSIGNAL_VERSION}.jar /tmp/libsignal-client.jar
