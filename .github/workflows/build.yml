@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        platform: [amd64, arm64]
+        platform: [arm64]
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v6 
