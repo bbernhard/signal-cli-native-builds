@@ -12,10 +12,11 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        platform: [arm64]
+        platform: [arm64, amd64]
+        os: [ubuntu-24.04-arm, ubuntu-24.04]
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v6 
