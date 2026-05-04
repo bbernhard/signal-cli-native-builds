@@ -19,10 +19,11 @@ jobs:
       - name: Setup GraalVM
         run: |
           wget -nv https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-aarch64_bin.tar.gz -O $GITHUB_WORKSPACE/gvm.tar.gz
-          tar xvf gvm.tar.gz
+          mkdir $GITHUB_WORKSPACE/graalvm
+          tar xvf gvm.tar.gz -C $GITHUB_WORKSPACE/graalvm --strip-components=1
           echo "GRAALVM_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
           echo "PATH=$GITHUB_WORKSPACE/graalvm/bin:$PATH" >> $GITHUB_ENV
-          echo "JAVA_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
+          #echo "JAVA_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
       - name: Clone signal-cli repository
         run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/AsamK/signal-cli/ signal-cli
       - name: Free up disk space
