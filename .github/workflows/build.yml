@@ -23,7 +23,11 @@ jobs:
           tar xvf gvm.tar.gz -C $GITHUB_WORKSPACE/graalvm --strip-components=1
           echo "GRAALVM_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
           echo "PATH=$GITHUB_WORKSPACE/graalvm/bin:$PATH" >> $GITHUB_ENV
-          #echo "JAVA_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
+          echo "JAVA_HOME=$GITHUB_WORKSPACE/graalvm" >> $GITHUB_ENV
+          echo $GRAALVM_HOME
+          echo $PATH
+          echo $JAVA_HOME
+          ls -la $GITHUB_WORKSPACE/graalvm
       - name: Clone signal-cli repository
         run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/AsamK/signal-cli/ signal-cli
       - name: Free up disk space
