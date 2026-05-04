@@ -22,6 +22,7 @@ jobs:
       - name: Setup GraalVM
         run: |
           arch=$([ "${{ matrix.platform }}" == "amd64" ] && echo "x64" || echo "aarch64")
+          echo "Download GraalVM for architecture ${arch}"
           wget -nv https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-${arch}_bin.tar.gz -O $GITHUB_WORKSPACE/gvm.tar.gz
           mkdir $GITHUB_WORKSPACE/graalvm
           tar xvf gvm.tar.gz -C $GITHUB_WORKSPACE/graalvm --strip-components=1
