@@ -132,6 +132,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd $GITHUB_WORKSPACE/
           gh release create \
             --target master \
             --title "Version ${{ inputs.version }}" \
