@@ -118,6 +118,25 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v8
-      - name: Create Release
-        run: ls -la
+      - name: Create archive
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64
+          mkdir -p $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64
+          cp native-image-ubuntu-24.04 $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64/signal-cli-native
+          cp native-image-ubuntu-24.04-arm $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64/signal-cli-native
+          cd $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}
+          tar -czvf signal-cli-native-${{ inputs.version }}.tar.gz signal-cli-native-${{ inputs.version }}
+      - name: Create a new release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create \
+            --target master \
+            --title "Version ${{ inputs.version }}" \
+            --notes "Produced by GitHub actions run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            ${{ inputs.version }}
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ inputs.version }} "${GITHUB_WORKSPACE}/assets/signal-cli-native-${{ inputs.version }}.tar.gz"
 
