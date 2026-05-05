@@ -124,8 +124,9 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64
           mkdir -p $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64
-          cp native-image-x86-64 $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64/signal-cli-native
-          cp native-image-arm64 $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64/signal-cli-native
+          ls -la native-image-x86-64
+          cp native-image-x86-64/signal-cli $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64/signal-cli-native
+          cp native-image-arm64-signal-cli $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64/signal-cli-native
           cd $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}
           tar -czvf signal-cli-native-${{ inputs.version }}.tar.gz signal-cli-native-${{ inputs.version }}
       - name: Create a new release
