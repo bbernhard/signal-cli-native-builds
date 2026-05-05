@@ -12,16 +12,18 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
-        os: [ubuntu-24.04-arm, ubuntu-24.04]
+        config:
+          - {os: ubuntu-24.04-arm, arch: "arm64"}
+          - {os: ubuntu-24.04, arch: "x86-64"]
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v6
       - name: Setup GraalVM
         run: |
-          arch=$([ "${{ matrix.os }}" == "ubuntu-24.04" ] && echo "x64" || echo "aarch64")
+          arch=$([ "${{ matrix.config.arch }}" == "x86-64" ] && echo "x64" || echo "aarch64")
           echo "Download GraalVM for architecture ${arch}"
           wget -nv https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-${arch}_bin.tar.gz -O $GITHUB_WORKSPACE/gvm.tar.gz
           mkdir $GITHUB_WORKSPACE/graalvm
@@ -84,8 +86,7 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           wget https://github.com/bbernhard/libsignal-client-builds/releases/download/v${LIBSIGNAL_VERSION}/libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
           tar xvf libsignal-client-build-v${LIBSIGNAL_VERSION}.tar.gz
-          arch=$([ "${{ matrix.os }}" == "ubuntu-24.04" ] && echo "x86-64" || echo "arm64")
-          cp ${GITHUB_WORKSPACE}/${arch}/libsignal_jni.so /tmp/libsignal_jni.so
+          cp ${GITHUB_WORKSPACE}/${{ matrix.config.arch }}/libsignal_jni.so /tmp/libsignal_jni.so
       - name: Get signal-cli release to extract jar file
         run: |
           mkdir /tmp/signal-cli-release
@@ -108,7 +109,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: native-image-${{ matrix.os }}
+          name: native-image-${{ matrix.config.arch }}
           path: signal-cli/build/native/nativeCompile/signal-cli
           if-no-files-found: error
           retention-days: 1
@@ -122,8 +123,8 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64
           mkdir -p $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64
-          cp native-image-ubuntu-24.04 $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64/signal-cli-native
-          cp native-image-ubuntu-24.04-arm $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64/signal-cli-native
+          cp native-image-x86-64 $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/x86-64/signal-cli-native
+          cp native-image-arm64 $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}/arm64/signal-cli-native
           cd $GITHUB_WORKSPACE/assets/signal-cli-native-${{ inputs.version }}
           tar -czvf signal-cli-native-${{ inputs.version }}.tar.gz signal-cli-native-${{ inputs.version }}
       - name: Create a new release
