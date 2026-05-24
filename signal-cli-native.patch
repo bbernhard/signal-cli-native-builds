@@ -1,10 +1,10 @@
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 64e29294..5d0e53cc 100644
+index d4f97eb6..a2f0978f 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -104,6 +104,7 @@ dependencies {
          implementation(libs.micronaut.json.schema.generator)
-     }    
+     }
      implementation(project(":libsignal-cli"))
 +    implementation(files("/tmp/libsignal-client.jar"))
  
